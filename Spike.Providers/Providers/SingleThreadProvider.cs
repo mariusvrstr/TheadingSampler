@@ -4,7 +4,7 @@ namespace Spike.Providers.Providers
     using System;
     using Common;
 
-    public class SingleThreadProvider : HashProviderBase
+    public class SingleThreadProvider : ThreadingProviderBase
     {
         protected override void HashSampleSet(ref ProcessCounters counters)
         {

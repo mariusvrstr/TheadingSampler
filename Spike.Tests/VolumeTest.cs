@@ -1,12 +1,11 @@
 ﻿
-using System;
-using Spike.Providers;
-using Spike.Providers.Providers;
-using Spike.Tests.Contracts;
-
 namespace Spike.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using Providers;
+    using Providers.Providers;
+    using Contracts;
 
     [TestClass]
     public class VolumeTest
@@ -16,23 +15,25 @@ namespace Spike.Tests
         [TestMethod]
         public void HighVolumeThreadingTest()
         {
-            var numberOfItemsToProcess = 100000;
-            var threadType = ThreadingType.ManagedThreadPool;
+            var numberOfItemsToProcess = 50000;
+            var threadType = ThreadingType.CustomThreadPool;
 
-            HashProviderBase provider;
+            ThreadingProviderBase provider;
 
             switch (threadType)
             {
                     case ThreadingType.SingleThread: provider = new SingleThreadProvider();
                         break;
-                    case ThreadingType.ManagedThreadPool: provider = new QueueUserWorkItemProvider();
+                    case ThreadingType.ManagedThreadPool: provider = new ManagedThreadPoolProvider();
                         break;
-                    case ThreadingType.ManualThreadPool: provider = new ThreadStartProvider(SizeOfManualThreadPoolIfApplicable);
+                    case ThreadingType.CustomThreadPool: provider = new CustomThreadPoolProvider(SizeOfManualThreadPoolIfApplicable);
                         break;
-                default: throw new InvalidOperationException();
+                    default: throw new InvalidOperationException();
             }
 
             var result = provider.RunSampleTest(numberOfItemsToProcess);
+
+            Assert.AreEqual(numberOfItemsToProcess, result.NumberOfItemsProcessed);
         }
     }
 }

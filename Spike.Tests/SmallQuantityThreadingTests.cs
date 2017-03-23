@@ -2,16 +2,15 @@
 namespace Spike.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Providers;
     using Providers.Providers;
 
     [TestClass]
-    public class ThreadingTests
+    public class SmallQuantityThreadingTests
     {
-        private const int SmallSampleSize = 20;
+        private const int SmallSampleSize = 100;
 
         [TestMethod]
-        public void SingleThreadSmallQuanityTest()
+        public void SingleThreadSmallQuantityTest()
         {
             var provider = new SingleThreadProvider();
             var result = provider.RunSampleTest(SmallSampleSize);
@@ -22,9 +21,9 @@ namespace Spike.Tests
         }
 
         [TestMethod]
-        public void MultiThreadUsingManagedThreadQueueSmallQuantityTest()
+        public void MultiThreadUsingManagedThreadPoolSmallQuantityTest()
         {
-            var provider = new QueueUserWorkItemProvider();
+            var provider = new ManagedThreadPoolProvider();
             var result = provider.RunSampleTest(SmallSampleSize);
 
             Assert.AreEqual(SmallSampleSize, result.NumberOfItemsProcessed);
@@ -33,15 +32,27 @@ namespace Spike.Tests
         }
 
         [TestMethod]
-        public void MultiThreadUsingThreadStartSmallQuantityTest()
+        public void MultiThreadUsingCustomThreadPoolSmallQuantityTest()
         {
             var threadPoolSize = 5;
-            var provider = new QueueUserWorkItemProvider();
+            var provider = new ManagedThreadPoolProvider();
             var result = provider.RunSampleTest(SmallSampleSize);
 
             Assert.AreEqual(SmallSampleSize, result.NumberOfItemsProcessed);
             Assert.AreEqual(0, result.FailedItems);
-            Assert.AreEqual(threadPoolSize, result.NumberOfThreads);
+            Assert.IsTrue(result.NumberOfThreads <= threadPoolSize);
+            Assert.IsTrue(result.NumberOfThreads > 1);
+        }
+
+        [TestMethod]
+        public void ParallelProgrammingUsingTplSmallQuantityTest()
+        {
+            var provider = new TaskParallelLibraryProvider();
+            var result = provider.RunSampleTest(SmallSampleSize);
+
+            Assert.AreEqual(SmallSampleSize, result.NumberOfItemsProcessed);
+            Assert.AreEqual(0, result.FailedItems);
+            Assert.IsTrue(result.NumberOfThreads > 1);
         }
     }
 }

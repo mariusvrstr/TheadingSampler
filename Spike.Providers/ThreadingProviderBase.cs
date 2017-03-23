@@ -5,7 +5,7 @@ namespace Spike.Providers
     using System.Collections.Generic;
     using Common;
 
-    public abstract class HashProviderBase
+    public abstract class ThreadingProviderBase
     {
         protected List<WorkTask> TaskList { get; set; }
         protected int NumberOfItemsToProcess { get; set; }

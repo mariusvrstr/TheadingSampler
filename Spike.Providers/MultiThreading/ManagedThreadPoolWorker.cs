@@ -7,11 +7,12 @@ namespace Spike.Providers.MultiThreading
     using System.Threading;
     using Common;
 
-    public class ThreadWorker
+    public class ManagedThreadPoolWorker
     {
         private ProcessCounters InternalCounter { get; set; }
 
-        public List<WorkTask> WorkQueue { get; set; }
+        private Queue<WorkTask> WorkQueue { get; } = new Queue<WorkTask>();
+
         private List<int> ThreadsUsed { get; set; }
        
         public void WorkWrapper(object obj)
@@ -47,8 +48,7 @@ namespace Spike.Providers.MultiThreading
         
         public void ProcessWorkItem(WorkTask workItem)
         {
-            ThreadPool.QueueUserWorkItem(WorkWrapper, workItem);
-            WorkQueue.Remove(workItem);
+            ThreadPool.QueueUserWorkItem(WorkWrapper, WorkQueue.Dequeue());
         }
 
         public void ProcessAllWorkItems(ref ProcessCounters counter)
@@ -63,6 +63,19 @@ namespace Spike.Providers.MultiThreading
                     var workItem = WorkQueue.FirstOrDefault();
                     ProcessWorkItem(workItem);
                 }
+            }
+        }
+
+        public void AddWork(WorkTask task)
+        {
+            WorkQueue.Enqueue(task);
+        }
+
+        public void AddWork(IEnumerable<WorkTask> tasks)
+        {
+            foreach (var task in tasks)
+            {
+                WorkQueue.Enqueue(task);
             }
         }
     }

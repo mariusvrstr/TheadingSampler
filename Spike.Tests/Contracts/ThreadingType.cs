@@ -9,6 +9,8 @@ namespace Spike.Tests.Contracts
 
         ManagedThreadPool = 2,
 
-        ManualThreadPool = 3
+        CustomThreadPool = 3,
+
+        ParrallelLibrary = 4
     }
 }

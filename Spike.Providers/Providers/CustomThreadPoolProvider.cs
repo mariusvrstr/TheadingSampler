@@ -1,31 +1,35 @@
 ﻿
-
+using System.Collections.Generic;
 
 namespace Spike.Providers.Providers
 {
-    using Common;
-    using MultiThreading;
     using System;
     using System.Threading;
+    using MultiThreading;
+    using Common;
 
-    public class QueueUserWorkItemProvider : HashProviderBase
+    public class CustomThreadPoolProvider : ThreadingProviderBase
     {
+        public int ThreadPoolSize { get; private set; }
         private const int WaitBufferInTics = 2;
+        
 
+        public CustomThreadPoolProvider(int threadPoolSize)
+        {
+            ThreadPoolSize = threadPoolSize;
+        }
+      
+        
         protected override void HashSampleSet(ref ProcessCounters counters)
         {
             var lastCount = 0;
             var unchangedTics = 0;
+            var threadWorker = new CustomThreadPoolWorker(ThreadPoolSize);
 
-            var threadWorker = new ThreadWorker
-            {
-                WorkQueue = TaskList
-            };
-
-            threadWorker.ProcessAllWorkItems(ref counters);
-
-
-            while (counters.ProcessedItems <  NumberOfItemsToProcess && unchangedTics < WaitBufferInTics)
+            threadWorker.AddWork(TaskList);
+            threadWorker.InitializeThreadPool(ref counters);
+            
+            while (counters.ProcessedItems < NumberOfItemsToProcess && unchangedTics < WaitBufferInTics)
             {
                 if (lastCount == counters.ProcessedItems && lastCount > 0)
                 {

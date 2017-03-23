@@ -46,13 +46,15 @@
     <Compile Include="Common\SampleWorker.cs" />
     <Compile Include="Common\StopwatchWorker.cs" />
     <Compile Include="Common\WorkTask.cs" />
-    <Compile Include="HashProviderBase.cs" />
+    <Compile Include="ThreadingProviderBase.cs" />
     <Compile Include="Common\HashWorker.cs" />
-    <Compile Include="MultiThreading\ThreadWorker.cs" />
-    <Compile Include="Providers\QueueUserWorkItemProvider.cs" />
+    <Compile Include="MultiThreading\CustomThreadPoolWorker.cs" />
+    <Compile Include="MultiThreading\ManagedThreadPoolWorker.cs" />
+    <Compile Include="Providers\ManagedThreadPoolProvider.cs" />
     <Compile Include="Providers\SingleThreadProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\ThreadStartProvider.cs" />
+    <Compile Include="Providers\TaskParallelLibraryProvider.cs" />
+    <Compile Include="Providers\CustomThreadPoolProvider.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
